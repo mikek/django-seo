@@ -283,6 +283,11 @@ def get_linked_metadata(obj, name=None, context=None, site=None, language=None):
         except ModelMetadata.DoesNotExist:
             model_md = ModelMetadata(_content_type=content_type)
         instances.append(model_md)    
+
+    backend_context = {'view_context': context }
+    for instance in instances:
+        if hasattr(instance, '_process_context'):
+            instance._process_context(backend_context)
     return FormattedMetadata(Metadata, instances, '', site, language)
 
 

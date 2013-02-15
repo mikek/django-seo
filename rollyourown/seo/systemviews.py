@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+try:
+    from transurlvania.urlresolvers import LangSelectionRegexURLResolver
+    support_transurlvania = True
+except ImportError:
+    support_transurlvania = False
+
 def get_seo_views(metadata_class):
     return get_view_names(metadata_class._meta.seo_views)
 
@@ -32,8 +38,20 @@ def get_view_names(seo_views):
                 output.append(name)
             else:
                 for url in urls.urlpatterns:
-                    if url.name:
-                        output.append(url.name)
+                    if support_transurlvania:
+                        if isinstance(url, LangSelectionRegexURLResolver):
+                            for url_trans in url.url_patterns:
+                                if url_trans.name:
+                                    output.append(url_trans.name)
+                        else:
+                            if hasattr(url, 'name') and url.name:
+                                output.append(url.name)
+                    else:
+                        if url.name:
+                            output.append(url.name)
+                            
+    output = list(set(output))
+    output.sort()
     return output
 
 from rollyourown.seo.utils import LazyChoices

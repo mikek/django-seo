@@ -46,6 +46,25 @@ class SiteModelMetadataAdmin(admin.ModelAdmin):
 class SiteViewMetadataAdmin(admin.ModelAdmin):
     list_display = ('_view', '_site')
     list_filter = ('_site',)
+    
+    
+# Varients with language support
+
+class LanguagePathMetadataAdmin(admin.ModelAdmin):
+    list_display = ('_path', '_language')
+    list_filter = ('_language',)
+
+class LanguageModelInstanceMetadataAdmin(admin.ModelAdmin):
+    list_display = ('_path', '_content_type', '_object_id', '_language')
+    list_filter = ('_language', '_content_type')
+
+class LanguageModelMetadataAdmin(admin.ModelAdmin):
+    list_display = ('_content_type', '_language')
+    list_filter = ('_language',)
+
+class LanguageViewMetadataAdmin(admin.ModelAdmin):
+    list_display = ('_view', '_language')
+    list_filter = ('_language',)
 
 
 def register_seo_admin(admin_site, metadata_class):
@@ -56,6 +75,11 @@ def register_seo_admin(admin_site, metadata_class):
         model_instance_admin = SiteModelInstanceMetadataAdmin
         model_admin = SiteModelMetadataAdmin
         view_admin = SiteViewMetadataAdmin
+    elif metadata_class._meta.use_i18n:
+        path_admin = LanguagePathMetadataAdmin
+        model_instance_admin = LanguageModelInstanceMetadataAdmin
+        model_admin = LanguageModelMetadataAdmin
+        view_admin = LanguageViewMetadataAdmin
     else:
         path_admin = PathMetadataAdmin
         model_instance_admin = ModelInstanceMetadataAdmin
