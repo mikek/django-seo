@@ -276,7 +276,10 @@ def get_linked_metadata(obj, name=None, context=None, site=None, language=None):
         instances.append(instance_md)
     if ModelMetadata is not None:
         try:
-            model_md = ModelMetadata.objects.get(_content_type=content_type)
+            if language:
+                model_md = ModelMetadata.objects.get(_content_type=content_type, _language=language)
+            else:
+                model_md = ModelMetadata.objects.get(_content_type=content_type)
         except ModelMetadata.DoesNotExist:
             model_md = ModelMetadata(_content_type=content_type)
         instances.append(model_md)    
